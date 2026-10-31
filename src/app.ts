@@ -36,8 +36,26 @@ app.use(
 );
 
 
+// Root welcome endpoint
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    service: 'StudioSpace Backend API',
+    status: 'online',
+    version: '1.0.0',
+    documentation: {
+      health: '/api/health',
+      ready: '/api/ready',
+      diagnostics: '/api/health/diagnostics',
+      studios: '/api/studios',
+      featured: '/api/studios/featured'
+    }
+  });
+});
+
 // Health check endpoints
 app.get('/api/health', (req, res) => {
+
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
