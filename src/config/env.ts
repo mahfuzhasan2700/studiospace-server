@@ -11,7 +11,9 @@ const envSchema = z.object({
   CLIENT_ORIGIN: z.string().default('http://localhost:3000'),
   BETTER_AUTH_URL: z.string().default('http://localhost:3000'),
   BETTER_AUTH_SECRET: z.string().min(16, 'BETTER_AUTH_SECRET must be at least 16 chars').default('studiospace_super_secret_session_key_987654321'),
+  JWT_SECRET: z.string().min(16).optional().default('studiospace_super_secret_session_key_987654321'),
   CSRF_SECRET: z.string().min(16, 'CSRF_SECRET must be at least 16 chars').default('studiospace_csrf_secret_key_123456789'),
+
   GOOGLE_CLIENT_ID: z.string().optional().default(''),
   GOOGLE_CLIENT_SECRET: z.string().optional().default(''),
   IMGBB_API_KEY: z.string().optional().default('')
