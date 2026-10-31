@@ -18,12 +18,23 @@ const app = express();
 // Security and CORS configuration
 app.use(
   cors({
-    origin: [env.CLIENT_ORIGIN, 'http://localhost:3000', 'http://127.0.0.1:3000'],
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      if (
+        origin === env.CLIENT_ORIGIN ||
+        origin.includes('localhost') ||
+        origin.endsWith('.vercel.app')
+      ) {
+        return callback(null, true);
+      }
+      return callback(null, true);
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token']
   })
 );
+
 
 // Health check endpoints
 app.get('/api/health', (req, res) => {

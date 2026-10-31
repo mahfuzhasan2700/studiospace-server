@@ -204,3 +204,4 @@ export async function completeBooking(bookingId: string, hostUser: AuthUser): Pr
 
   return formatBookingResponse(updated);
 }
+

@@ -50,3 +50,4 @@ seedExaminerAccounts().catch((err) => {
   console.error('Failed to seed examiner accounts:', err);
   process.exit(1);
 });
+

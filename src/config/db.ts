@@ -9,11 +9,17 @@ export const client = new MongoClient(env.MONGODB_URI, {
 
 export const db: Db = client.db(env.MONGODB_DB_NAME);
 
+let isConnected = false;
+
 export async function connectDb(): Promise<Db> {
-  await client.connect();
-  console.log(`Connected to MongoDB database: ${env.MONGODB_DB_NAME}`);
+  if (!isConnected) {
+    await client.connect();
+    isConnected = true;
+    console.log(`Connected to MongoDB database: ${env.MONGODB_DB_NAME}`);
+  }
   return db;
 }
+
 
 export function getDb(): Db {
   return db;

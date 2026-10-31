@@ -22,3 +22,4 @@ export const updateBookingStatusSchema = z.object({
 });
 
 export type UpdateBookingStatusInput = z.infer<typeof updateBookingStatusSchema>;
+

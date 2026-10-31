@@ -59,3 +59,4 @@ export interface BookingResponse {
   createdAt: string;
   updatedAt: string;
 }
+

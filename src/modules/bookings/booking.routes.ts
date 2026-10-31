@@ -15,3 +15,4 @@ router.patch('/:id/confirm', bookingController.confirmBooking);
 router.patch('/:id/complete', bookingController.completeBooking);
 
 export default router;
+

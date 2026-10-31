@@ -103,3 +103,4 @@ export async function completeBooking(req: Request, res: Response, next: NextFun
     next(error);
   }
 }
+
