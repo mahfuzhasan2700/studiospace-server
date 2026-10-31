@@ -84,3 +84,4 @@ export interface StudioDetailResponse extends StudioSummaryResponse {
   };
   updatedAt: string;
 }
+

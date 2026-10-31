@@ -62,3 +62,4 @@ export async function getStudioById(id: string): Promise<StudioDetailResponse> {
   }
   return formatStudioDetail(doc);
 }
+

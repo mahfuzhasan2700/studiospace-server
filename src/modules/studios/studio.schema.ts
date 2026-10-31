@@ -65,3 +65,4 @@ export const createStudioSchema = z.object({
 });
 
 export type CreateStudioInput = z.infer<typeof createStudioSchema>;
+

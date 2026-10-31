@@ -79,3 +79,4 @@ export async function insertStudio(doc: Omit<StudioDocument, '_id'>): Promise<St
   const result = await collection.insertOne(doc as any);
   return { ...doc, _id: result.insertedId } as StudioDocument;
 }
+

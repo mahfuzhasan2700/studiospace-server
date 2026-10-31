@@ -9,3 +9,4 @@ router.get('/featured', studioController.getFeaturedStudios);
 router.get('/:id', studioController.getStudioById);
 
 export default router;
+

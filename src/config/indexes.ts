@@ -25,3 +25,4 @@ export async function initIndexes(db: Db): Promise<void> {
 
   console.log('MongoDB collection indexes initialized successfully.');
 }
+

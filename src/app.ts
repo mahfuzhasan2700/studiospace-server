@@ -1,9 +1,13 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import { toNodeHandler } from 'better-auth/node';
 import { env } from './config/env.js';
 import { getDb } from './config/db.js';
+import { auth } from './auth/auth.js';
+import apiSessionRoutes from './auth/api-session.routes.js';
 import studioRoutes from './modules/studios/studio.routes.js';
+import { requireAuth } from './middleware/require-auth.js';
 import { errorHandler } from './middleware/error-handler.js';
 
 const app = express();
@@ -45,13 +49,29 @@ app.get('/api/ready', async (req, res) => {
   }
 });
 
-// Parsers for standard API routes
+// CRITICAL: Mount BetterAuth handler BEFORE express.json()
+// BetterAuth needs direct access to the incoming HTTP request stream
+app.all('/api/auth/*', toNodeHandler(auth));
+
+// Body and Cookie Parsers for application routes
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 app.use(cookieParser());
 
+// Session and JWT routes (Challenge 1)
+app.use('/api/session', apiSessionRoutes);
+
 // Business API Routers
 app.use('/api/studios', studioRoutes);
+
+// Protected route verification test endpoint
+app.get('/api/me/verify-token', requireAuth, (req, res) => {
+  res.json({
+    success: true,
+    message: 'Authorized! Token verified successfully.',
+    user: req.user
+  });
+});
 
 // Catch 404 for unmatched API routes
 app.use((req, res) => {
