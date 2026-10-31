@@ -10,6 +10,15 @@
 
 ---
 
+## 🌐 Live URLs & Deployment
+- **Backend API**: [https://studiospace-server-theta.vercel.app](https://studiospace-server-theta.vercel.app)
+- **Client Frontend**: [https://studiospace-client-eight.vercel.app](https://studiospace-client-eight.vercel.app)
+- **GitHub Server**: [https://github.com/mahfuzhasan2700/studiospace-server](https://github.com/mahfuzhasan2700/studiospace-server)
+- **GitHub Client**: [https://github.com/mahfuzhasan2700/studiospace-client](https://github.com/mahfuzhasan2700/studiospace-client)
+
+
+---
+
 ## 🏛️ Architecture Overview
 
 The backend is built around clean layered architecture:
