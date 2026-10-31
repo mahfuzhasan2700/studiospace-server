@@ -10,12 +10,22 @@ export const auth = betterAuth({
   baseURL: env.BETTER_AUTH_URL,
   basePath: '/api/auth',
   secret: env.BETTER_AUTH_SECRET,
-  trustedOrigins: [
-    env.CLIENT_ORIGIN,
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-    `http://localhost:${env.PORT}`
-  ],
+  trustedOrigins: (request) => {
+    const origin = request?.headers?.get?.('origin') || '';
+    const origins = [
+      env.CLIENT_ORIGIN,
+      'https://studiospace-client-eight.vercel.app',
+      'https://studiospace-client.vercel.app',
+      'https://studiospace-server-theta.vercel.app',
+      'http://localhost:3000',
+      'http://127.0.0.1:3000'
+    ];
+    if (origin && (origin.endsWith('.vercel.app') || origin.includes('localhost'))) {
+      origins.push(origin);
+    }
+    return origins;
+  },
+
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 6,
