@@ -7,7 +7,10 @@ import { getDb } from './config/db.js';
 import { auth } from './auth/auth.js';
 import apiSessionRoutes from './auth/api-session.routes.js';
 import studioRoutes from './modules/studios/studio.routes.js';
+import bookingRoutes from './modules/bookings/booking.routes.js';
+import * as studioController from './modules/studios/studio.controller.js';
 import { requireAuth } from './middleware/require-auth.js';
+
 import { errorHandler } from './middleware/error-handler.js';
 
 const app = express();
@@ -63,6 +66,9 @@ app.use('/api/session', apiSessionRoutes);
 
 // Business API Routers
 app.use('/api/studios', studioRoutes);
+app.use('/api/bookings', bookingRoutes);
+app.get('/api/me/studios', requireAuth, studioController.getMyStudios);
+
 
 // Protected route verification test endpoint
 app.get('/api/me/verify-token', requireAuth, (req, res) => {
