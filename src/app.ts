@@ -52,6 +52,51 @@ app.get('/api/ready', async (req, res) => {
   }
 });
 
+app.get('/api/health/diagnostics', async (req, res) => {
+  try {
+    const db = getDb();
+    const start = Date.now();
+    await db.command({ ping: 1 });
+    const latencyMs = Date.now() - start;
+
+    const [studioCount, bookingCount, userCount] = await Promise.all([
+      db.collection('studios').countDocuments().catch(() => 0),
+      db.collection('bookings').countDocuments().catch(() => 0),
+      db.collection('user').countDocuments().catch(() => 0)
+    ]);
+
+    res.json({
+      success: true,
+      service: 'StudioSpace Backend API',
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      uptimeSeconds: Math.floor(process.uptime()),
+      environment: env.NODE_ENV,
+      database: {
+        status: 'connected',
+        name: env.MONGODB_DB_NAME,
+        latencyMs,
+        collections: {
+          studios: studioCount,
+          bookings: bookingCount,
+          users: userCount
+        }
+      },
+      system: {
+        nodeVersion: process.version,
+        memoryUsageMb: Math.round(process.memoryUsage().rss / (1024 * 1024))
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      status: 'unhealthy',
+      error: error instanceof Error ? error.message : 'Diagnostic probe failed'
+    });
+  }
+});
+
+
 // CRITICAL: Mount BetterAuth handler BEFORE express.json()
 // BetterAuth needs direct access to the incoming HTTP request stream
 app.all('/api/auth/*', toNodeHandler(auth));
