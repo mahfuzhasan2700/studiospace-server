@@ -166,4 +166,39 @@ npm start
 # Or run development mode with auto-reload
 npm run dev
 ```
-API will listen at `http://localhost:5000`.
+### 5. Automated Integration Test Suite
+```bash
+# Execute end-to-end integration test suite
+npm test
+```
+The automated test runner executes 7 comprehensive tests against live endpoints:
+- `GET /api/health` — liveness check
+- `GET /api/studios` — public catalog listing
+- `GET /api/studios/featured` — featured studios limit validation
+- `GET /api/studios/:id` — studio details lookup
+- `GET /api/studios?category=Music%20Recording` — filter verification
+- `POST /api/auth/sign-in/email` — BetterAuth authentication & session cookie issuance
+- `POST /api/bookings` — Challenge 2 Double-Booking / Time Slot Conflict rejection (HTTP 409)
+
+---
+
+## 🚀 Vercel Serverless Deployment Settings
+
+When deploying `studiospace-server` on Vercel:
+- **Framework Preset**: `Other` or `Express`
+- **Root Directory**: `./`
+- **Build Command**: Toggle ON and set to `npm run build` (or rely on `vercel-build: "tsc"` in `package.json`)
+- **Install Command**: `npm install --legacy-peer-deps --include=dev`
+- **Output Directory**: `dist` or leave empty (managed by `/api/index.js` serverless handler)
+
+### Required Environment Variables on Vercel:
+| Variable | Value / Format | Note |
+| :--- | :--- | :--- |
+| `NODE_ENV` | `production` | Enables production optimizations |
+| `MONGODB_URI` | `mongodb+srv://<user>:<password>@cluster.mongodb.net/?retryWrites=true&w=majority` | Connection string to Atlas |
+| `MONGODB_DB_NAME` | `studiospace_db` | Target database |
+| `CLIENT_ORIGIN` | `https://studiospace-client-eight.vercel.app` | CORS allowed origin |
+| `BETTER_AUTH_URL` | `https://studiospace-server-theta.vercel.app` | Backend URL for BetterAuth |
+| `BETTER_AUTH_SECRET` | Strong random secret string | Session encryption key |
+| `JWT_SECRET` | Strong random secret string | JWT signing key |
+| `CSRF_SECRET` | Strong random secret string | CSRF protection key |
