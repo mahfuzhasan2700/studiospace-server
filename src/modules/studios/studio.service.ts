@@ -1,6 +1,9 @@
-import { NotFoundError } from '../../utils/errors.js';
+import { NotFoundError, ForbiddenError } from '../../utils/errors.js';
 import * as studioRepo from './studio.repository.js';
 import { StudioDocument, StudioSummaryResponse, StudioDetailResponse } from './studio.types.js';
+import { CreateStudioInput, UpdateStudioInput } from './studio.schema.js';
+import { AuthUser } from '../../types/express.js';
+
 
 export function formatStudioSummary(doc: StudioDocument): StudioSummaryResponse {
   return {
@@ -62,4 +65,67 @@ export async function getStudioById(id: string): Promise<StudioDetailResponse> {
   }
   return formatStudioDetail(doc);
 }
+
+export async function createStudio(input: CreateStudioInput, user: AuthUser): Promise<StudioDetailResponse> {
+  const now = new Date();
+  const newStudio: Omit<StudioDocument, '_id'> = {
+    ...input,
+    ownerId: user.id,
+    ownerEmail: user.email,
+    ownerName: user.name,
+    ownerImage: user.image || undefined,
+    availabilityVersion: 1,
+    rating: 5.0,
+    reviewCount: 0,
+    createdAt: now,
+    updatedAt: now
+  };
+
+  const created = await studioRepo.insertStudio(newStudio);
+  return formatStudioDetail(created);
+}
+
+export async function getStudiosByOwner(ownerId: string): Promise<StudioSummaryResponse[]> {
+  const items = await studioRepo.findStudiosByOwner(ownerId);
+  return items.map(formatStudioSummary);
+}
+
+export async function updateStudio(
+  id: string,
+  input: UpdateStudioInput,
+  user: AuthUser
+): Promise<StudioDetailResponse> {
+  const existing = await studioRepo.findStudioById(id);
+  if (!existing) {
+    throw new NotFoundError(`Studio with ID '${id}' not found`);
+  }
+
+  if (existing.ownerId !== user.id) {
+    throw new ForbiddenError('You are not authorized to update this studio listing');
+  }
+
+  const updated = await studioRepo.updateStudio(id, input);
+  if (!updated) {
+    throw new NotFoundError(`Failed to update studio '${id}'`);
+  }
+
+  return formatStudioDetail(updated);
+}
+
+export async function deleteStudio(id: string, user: AuthUser): Promise<void> {
+  const existing = await studioRepo.findStudioById(id);
+  if (!existing) {
+    throw new NotFoundError(`Studio with ID '${id}' not found`);
+  }
+
+  if (existing.ownerId !== user.id) {
+    throw new ForbiddenError('You are not authorized to delete this studio listing');
+  }
+
+  const deleted = await studioRepo.deleteStudio(id);
+  if (!deleted) {
+    throw new NotFoundError(`Failed to delete studio '${id}'`);
+  }
+}
+
 

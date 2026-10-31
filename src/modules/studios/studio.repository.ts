@@ -80,3 +80,42 @@ export async function insertStudio(doc: Omit<StudioDocument, '_id'>): Promise<St
   return { ...doc, _id: result.insertedId } as StudioDocument;
 }
 
+export async function findStudiosByOwner(ownerId: string): Promise<StudioDocument[]> {
+  const collection = getCollection();
+  return collection
+    .find({ ownerId })
+    .sort({ createdAt: -1 })
+    .toArray();
+}
+
+export async function updateStudio(
+  id: string,
+  updates: Partial<Omit<StudioDocument, '_id' | 'ownerId' | 'createdAt'>>
+): Promise<StudioDocument | null> {
+  if (!ObjectId.isValid(id)) {
+    return null;
+  }
+  const collection = getCollection();
+  const result = await collection.findOneAndUpdate(
+    { _id: new ObjectId(id) },
+    {
+      $set: {
+        ...updates,
+        updatedAt: new Date()
+      }
+    },
+    { returnDocument: 'after' }
+  );
+  return result;
+}
+
+export async function deleteStudio(id: string): Promise<boolean> {
+  if (!ObjectId.isValid(id)) {
+    return false;
+  }
+  const collection = getCollection();
+  const result = await collection.deleteOne({ _id: new ObjectId(id) });
+  return result.deletedCount === 1;
+}
+
+

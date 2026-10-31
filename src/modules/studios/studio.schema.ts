@@ -66,3 +66,7 @@ export const createStudioSchema = z.object({
 
 export type CreateStudioInput = z.infer<typeof createStudioSchema>;
 
+export const updateStudioSchema = createStudioSchema.partial();
+export type UpdateStudioInput = z.infer<typeof updateStudioSchema>;
+
+
